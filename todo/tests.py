@@ -98,6 +98,37 @@ class TodoViewTestCase(TestCase):
         self.assertEqual(response.context['tasks'][0], task1)
         self.assertEqual(response.context['tasks'][1], task2)
 
+    def test_update_get(self):
+        task = Task(title='Original Task', due_at=timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59)))
+        task.save()
+        client = Client()
+        response = client.get(f'/{task.pk}/update')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, 'todo/edit.html')
+        self.assertEqual(response.context['task'], task)
+
+    def test_update_post(self):
+        task = Task(title='Original Task', due_at=timezone.make_aware(datetime(2024, 6, 30, 23, 59, 59)))
+        task.save()
+        client = Client()
+        data = {'title': 'Updated Task', 'due_at': '2024-07-31 10:00:00'}
+        response = client.post(f'/{task.pk}/update', data)
+
+        # リダイレクトを確認
+        self.assertEqual(response.status_code, 302)
+
+        # タスクが更新されていることを確認
+        updated_task = Task.objects.get(pk=task.pk)
+        self.assertEqual(updated_task.title, 'Updated Task')
+        self.assertEqual(updated_task.due_at, timezone.make_aware(datetime(2024, 7, 31, 10, 0, 0)))
+
+    def test_update_not_found(self):
+        client = Client()
+        response = client.get('/999/update')
+
+        self.assertEqual(response.status_code, 404)
+
     def test_detail_get_success(self):
         task = Task(title='task1', due_at=timezone.make_aware(datetime(2024, 7, 1)))
         task.save()
