@@ -6,9 +6,11 @@
     <title>To Do Application</title>
     <meta charset="UTF-8">
     <meta name="author" content="INIAD">
+    <link rel="stylesheet" href="{% static 'todo/style.css' %}">
   </head>
 
   <body>
+    <div class="container">
     <h1>Sample To Do Application</h1>
     <p>You can submit tasks from the following form.</p>
     <form action="{% url 'index' %}" method="post">
@@ -27,8 +29,8 @@
     </form>
     <br>
 
-    <div>
-      <a href="{% url 'index' %}?order=due">Sort by Due Date</a> |
+    <div class="links">
+      <a href="{% url 'index' %}?order=due">Sort by Due Date</a>
       <a href="{% url 'index' %}?order=post">Sort by Posted Date</a>
     </div>
 
@@ -48,6 +50,7 @@
       </ul>
     </div>
     {% endfor %}
+    </div>
   </body>
 
 </html>
