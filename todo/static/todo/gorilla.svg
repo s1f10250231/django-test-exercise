@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <!-- ゴリラ男爵: simple stylized gorilla face with monocle -->
+  <rect width="100%" height="100%" fill="none"/>
+  <circle cx="300" cy="340" r="160" fill="#6b5b4a" stroke="#3b2f26" stroke-width="8"/>
+  <!-- monocle -->
+  <circle cx="230" cy="320" r="36" fill="#fff"/>
+  <circle cx="230" cy="320" r="26" fill="#2b1b10"/>
+  <circle cx="230" cy="320" r="10" fill="#fff" opacity="0.8"/>
+  <path d="M260 300 L320 240" stroke="#3b2f26" stroke-width="6" stroke-linecap="round"/>
+  <!-- eye -->
+  <ellipse cx="380" cy="320" rx="34" ry="40" fill="#2b1b10"/>
+  <circle cx="390" cy="310" r="8" fill="#fff" opacity="0.8"/>
+  <!-- mouth -->
+  <path d="M250 420 Q300 470, 350 420" stroke="#231815" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <!-- bow tie -->
+  <path d="M230 470 L270 430 L290 470 Z" fill="#2f2f2f"/>
+  <path d="M370 470 L330 430 L310 470 Z" fill="#2f2f2f"/>
+</svg>

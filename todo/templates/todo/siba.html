@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>柴犬ゲーム</title>
+    <link rel="stylesheet" href="{% static 'todo/style.css' %}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      .controls { position: absolute; right: 12px; top: 12px; z-index: 1100; }
+      .controls a { color: var(--text); background: rgba(0,0,0,0.25); padding:8px 12px; border-radius:8px; }
+    </style>
+  </head>
+  <body>
+    <div class="siba-container" id="game">
+      <div class="siba-hint">クリックでキャラクターを消そう — 全て消えると再出現します</div>
+      <div class="controls"><a href="{% url 'index' %}">戻る</a></div>
+    </div>
+
+    <script>
+      (() => {
+        const container = document.getElementById('game');
+        const IMAGES = [
+          {src: '{% static "todo/shiba.svg" %}', name: '柴犬', behavior: 'static'},
+          {src: '{% static "todo/piman.svg" %}', name: 'ピーマンマン', behavior: 'static'},
+          {src: '{% static "todo/gorilla.svg" %}', name: 'ゴリラ男爵', behavior: 'static'},
+          {src: '{% static "todo/saba.svg" %}', name: '鯖男', behavior: 'static'},
+          {src: '{% static "todo/umeboshi.svg" %}', name: '梅干し女卑', behavior: 'static'},
+          {src: '{% static "todo/eyeball.svg" %}', name: '目玉', behavior: 'wander'},
+          {src: '{% static "todo/pen.svg" %}', name: '金色の鎖付きペン', behavior: 'swing'},
+          {src: '{% static "todo/ledger.svg" %}', name: '紫色の帳簿', behavior: 'drift'},
+          {src: '{% static "todo/ringbox.svg" %}', name: '白い箱の指輪', behavior: 'hop'}
+        ];
+
+        function rand(min, max) { return Math.random() * (max - min) + min; }
+
+        function spawnMany() {
+          // For each type, spawn 1..3
+          IMAGES.forEach(img => {
+            const count = Math.floor(rand(1,4)); // 1..3
+            for (let i=0;i<count;i++) spawnOne(img.src, img.name);
+          });
+        }
+
+        function spawnOne(src, name, behavior='static') {
+          const el = document.createElement('img');
+          el.src = src;
+          el.alt = name;
+          el.dataset.type = name;
+          el.className = 'siba-head';
+          el.dataset.behavior = behavior;
+          // random size in px
+          const size = Math.round(rand(64, 220));
+          el.style.width = size + 'px';
+          el.style.height = 'auto';
+          // random rotation
+          const rot = rand(-25,25);
+          // random position, ensure within viewport
+          const padding = 8;
+          const cw = container.clientWidth;
+          const ch = container.clientHeight;
+          const maxX = Math.max(0, cw - size - padding);
+          const maxY = Math.max(0, ch - size - padding);
+          const x = Math.round(rand(padding, maxX));
+          const y = Math.round(rand(64, maxY));
+          el.style.left = x + 'px';
+          el.style.top = y + 'px';
+          el.style.transform = `rotate(${rot}deg)`;
+          el.style.zIndex = Math.floor(rand(1,900));
+
+          el.addEventListener('click', (e) => {
+            // clear any timers
+            if (el._timer) { clearInterval(el._timer); }
+            if (el._hopTimer) { clearInterval(el._hopTimer); }
+            if (el._wanderTimer) { clearInterval(el._wanderTimer); }
+            el.style.opacity = '0';
+            setTimeout(() => { el.remove(); checkRespawn(); }, 140);
+          }, {passive:true});
+
+          el.addEventListener('touchstart', (e) => { e.preventDefault(); el.click(); }, {passive:false});
+
+          container.appendChild(el);
+
+          // start behavior
+          startBehavior(el, behavior);
+        }
+
+        function startBehavior(el, behavior) {
+          if (behavior === 'swing') {
+            el.classList.add('swing');
+          } else if (behavior === 'drift') {
+            el.classList.add('drift');
+          } else if (behavior === 'hop') {
+            // periodic hops
+            el._hopTimer = setInterval(() => {
+              el.classList.add('hop');
+              setTimeout(() => el.classList.remove('hop'), 800);
+            }, Math.floor(rand(900, 2200)));
+          } else if (behavior === 'wander') {
+            // gentle wandering: pick new position every 1.2-2.4s
+            el.style.transition = 'left 1.4s ease, top 1.4s ease, transform 0.6s ease';
+            el._wanderTimer = setInterval(() => {
+              const size = el.getBoundingClientRect().width;
+              const padding = 8;
+              const cw = container.clientWidth;
+              const ch = container.clientHeight;
+              const maxX = Math.max(0, cw - size - padding);
+              const maxY = Math.max(0, ch - size - padding);
+              const x = Math.round(rand(padding, maxX));
+              const y = Math.round(rand(64, maxY));
+              el.style.left = x + 'px';
+              el.style.top = y + 'px';
+              el.style.transform = `rotate(${rand(-18,18)}deg)`;
+            }, Math.floor(rand(1200, 2400)));
+          }
+        }
+
+        function checkRespawn() {
+          const remaining = container.querySelectorAll('.siba-head').length;
+          if (remaining === 0) {
+            setTimeout(spawnMany, 700);
+          }
+        }
+
+        // initial spawn after small delay to allow layout
+        window.addEventListener('load', () => { setTimeout(spawnMany, 200); });
+        // respawn on resize if none remain
+        window.addEventListener('resize', () => { if (container.querySelectorAll('.siba-head').length===0) spawnMany(); });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160">
+  <!-- 紫色の帳簿 -->
+  <rect x="10" y="10" width="220" height="140" rx="8" fill="#6b2fa6" stroke="#3b115a" stroke-width="4"/>
+  <rect x="34" y="26" width="172" height="108" rx="6" fill="#7d3fb8" opacity="0.9"/>
+  <line x1="50" y1="48" x2="190" y2="48" stroke="#ffd" stroke-width="3" opacity="0.6"/>
+  <line x1="50" y1="72" x2="190" y2="72" stroke="#ffd" stroke-width="2" opacity="0.5"/>
+</svg>
