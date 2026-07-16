@@ -10,6 +10,10 @@
   </head>
 
   <body>
+    <button class="theme-toggle" type="button" aria-pressed="false">
+      <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+      <span class="theme-toggle-label">ライトモードに切り替える</span>
+    </button>
     <div class="container">
     <h1>Edit task</h1>
     <p>You can edit tasks from the following form.</p>
@@ -29,6 +33,7 @@
     </form>
     <br>
     </div>
+    <script src="{% static 'todo/theme.js' %}"></script>
   </body>
 
 </html>

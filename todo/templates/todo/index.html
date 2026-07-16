@@ -13,6 +13,10 @@
     <a href="{% url 'siba' %}" class="shiba-link" title="柴犬ゲームへ">
       <img src="{% static 'todo/shiba.svg' %}" alt="柴犬">
     </a>
+    <button class="theme-toggle" type="button" aria-pressed="false">
+      <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+      <span class="theme-toggle-label">ライトモードに切り替える</span>
+    </button>
     <div class="container">
     <h1>Sample To Do Application</h1>
     <p>You can submit tasks from the following form.</p>
@@ -55,6 +59,7 @@
     </div>
     {% endfor %}
     </div>
+    <script src="{% static 'todo/theme.js' %}"></script>
   </body>
 
 </html>
