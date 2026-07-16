@@ -33,8 +33,9 @@
     <br>
 
     <div class="links">
+      <a href="{% url 'index' %}?order=title">Sort by Title</a>
+      <a href="{% url 'index' %}?order=posted">Sort by Posted Date</a>
       <a href="{% url 'index' %}?order=due">Sort by Due Date</a>
-      <a href="{% url 'index' %}?order=post">Sort by Posted Date</a>
     </div>
 
     {% for task in tasks %}
