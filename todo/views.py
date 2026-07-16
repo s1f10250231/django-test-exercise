@@ -11,8 +11,13 @@ def index(request):
                     due_at=make_aware(parse_datetime(request.POST['due_at'])))
         task.save()
 
-    if request.GET.get('order') == 'due':
+    order = request.GET.get('order')
+    if order == 'due':
         tasks = Task.objects.order_by('due_at')
+    elif order == 'posted':
+        tasks = Task.objects.order_by('-posted_at')
+    elif order == 'title':
+        tasks = Task.objects.order_by('title')
     else:
         tasks = Task.objects.order_by('-posted_at')
 
