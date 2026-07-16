@@ -10,6 +10,10 @@
   </head>
 
   <body>
+    <button class="theme-toggle" type="button" aria-pressed="false">
+      <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+      <span class="theme-toggle-label">ライトモードに切り替える</span>
+    </button>
     <div class="container">
     <h1>{{ task.title }}</h1>
     <ul>
@@ -30,6 +34,7 @@
       <a href="{% url "delete" task.id %}">Delete</a>
     </div>
     </div>
+    <script src="{% static 'todo/theme.js' %}"></script>
   </body>
 
 </html>

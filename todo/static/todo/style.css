@@ -9,6 +9,29 @@
   --accent-2: #22d3ee;
   --border: rgba(255, 255, 255, 0.14);
   --shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+  --input-bg: rgba(8, 10, 14, 0.75);
+  --link: #d8b4fe;
+  --link-hover: #ffffff;
+  --chip-bg: rgba(255, 255, 255, 0.06);
+  --chip-bg-hover: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f7ff;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-strong: rgba(255, 255, 255, 0.96);
+  --text: #111827;
+  --muted: #4b5563;
+  --accent: #7c3aed;
+  --accent-2: #0f766e;
+  --border: rgba(15, 23, 42, 0.12);
+  --shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+  --input-bg: #ffffff;
+  --link: #6d28d9;
+  --link-hover: #4c1d95;
+  --chip-bg: rgba(124, 58, 237, 0.12);
+  --chip-bg-hover: rgba(124, 58, 237, 0.2);
 }
 
 * {
@@ -24,6 +47,32 @@ body {
   background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.2), transparent 24%),
               radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.28), transparent 28%),
               var(--bg);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+}
+
+.theme-toggle-icon {
+  font-size: 1rem;
 }
 
 .container {
@@ -65,7 +114,7 @@ input {
   border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text);
-  background: rgba(8, 10, 14, 0.75);
+  background: var(--input-bg);
 }
 
 input:focus {
@@ -101,13 +150,13 @@ button:hover {
 .links a {
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #e9d5ff;
+  background: var(--chip-bg);
+  color: var(--link);
 }
 
 .links a:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
+  background: var(--chip-bg-hover);
+  color: var(--link-hover);
 }
 
 .text {
@@ -133,12 +182,12 @@ li {
 }
 
 a {
-  color: #d8b4fe;
+  color: var(--link);
   text-decoration: none;
 }
 
 a:hover {
-  color: white;
+  color: var(--link-hover);
 }
 
 /* Shiba link (top-right) */
