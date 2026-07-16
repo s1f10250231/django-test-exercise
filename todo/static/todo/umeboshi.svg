@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <!-- 梅干し女卑: stylized umeboshi character -->
+  <rect width="100%" height="100%" fill="none"/>
+  <circle cx="300" cy="340" r="160" fill="#ff6b6b" stroke="#b33" stroke-width="8"/>
+  <!-- eyes -->
+  <ellipse cx="240" cy="320" rx="22" ry="26" fill="#fff"/>
+  <ellipse cx="360" cy="320" rx="22" ry="26" fill="#fff"/>
+  <circle cx="248" cy="320" r="6" fill="#3a0a0a"/>
+  <circle cx="368" cy="320" r="6" fill="#3a0a0a"/>
+  <!-- mouth frown -->
+  <path d="M260 400 Q300 380, 340 400" stroke="#3a0a0a" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- wrinkle marks -->
+  <path d="M220 360 Q240 350, 260 360" stroke="#a02" stroke-width="4" fill="none" opacity="0.5"/>
+  <path d="M340 360 Q360 350, 380 360" stroke="#a02" stroke-width="4" fill="none" opacity="0.5"/>
+</svg>

@@ -55,3 +55,6 @@ def delete(request, task_id):
         raise Http404("Task does not exist")
     task.delete()
     return redirect(index)
+
+def siba(request):
+    return render(request, 'todo/siba.html')
