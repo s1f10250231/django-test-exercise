@@ -13,6 +13,7 @@
   </head>
   <body>
     <div class="siba-container" id="game">
+      <div class="minesweeper-layer" id="minefield" aria-label="マインスイーパー"></div>
       <div class="siba-hint">クリックでキャラクターを消そう — 全て消えると再出現します</div>
       <div class="controls"><a href="{% url 'index' %}">戻る</a></div>
     </div>
@@ -20,6 +21,10 @@
     <script>
       (() => {
         const container = document.getElementById('game');
+        const minefield = document.getElementById('minefield');
+        let mineGrid = [];
+        let revealedCells = 0;
+        let gameOver = false;
         const IMAGES = [
           {src: '{% static "todo/shiba.svg" %}', name: '柴犬', behavior: 'static'},
           {src: '{% static "todo/piman.svg" %}', name: 'ピーマンマン', behavior: 'static'},
@@ -33,6 +38,130 @@
         ];
 
         function rand(min, max) { return Math.random() * (max - min) + min; }
+
+        function countAdjacentMines(row, col, rows, cols) {
+          let count = 0;
+          for (let r = Math.max(0, row - 1); r <= Math.min(rows - 1, row + 1); r++) {
+            for (let c = Math.max(0, col - 1); c <= Math.min(cols - 1, col + 1); c++) {
+              if (r === row && c === col) continue;
+              if (mineGrid[r][c] === 'mine') count++;
+            }
+          }
+          return count;
+        }
+
+        function revealAllMines() {
+          const rows = mineGrid.length;
+          const cols = mineGrid[0].length;
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (mineGrid[r][c] !== 'mine') continue;
+              const idx = r * cols + c;
+              const cell = minefield.children[idx];
+              if (!cell) continue;
+              cell.classList.add('is-revealed', 'is-mine');
+              cell.textContent = '💣';
+            }
+          }
+        }
+
+        function floodReveal(row, col) {
+          const rows = mineGrid.length;
+          const cols = mineGrid[0].length;
+          const stack = [[row, col]];
+
+          while (stack.length) {
+            const [r, c] = stack.pop();
+            if (r < 0 || c < 0 || r >= rows || c >= cols) continue;
+            const idx = r * cols + c;
+            const cell = minefield.children[idx];
+            if (!cell || cell.classList.contains('is-revealed')) continue;
+
+            const value = mineGrid[r][c];
+            cell.classList.add('is-revealed');
+            revealedCells++;
+
+            if (value === 0) {
+              cell.textContent = '';
+              for (let rr = Math.max(0, r - 1); rr <= Math.min(rows - 1, r + 1); rr++) {
+                for (let cc = Math.max(0, c - 1); cc <= Math.min(cols - 1, c + 1); cc++) {
+                  if (rr === r && cc === c) continue;
+                  if (mineGrid[rr][cc] !== 'mine') stack.push([rr, cc]);
+                }
+              }
+            } else {
+              cell.textContent = value;
+            }
+          }
+
+          const safeCells = mineGrid.flat().filter((value) => value !== 'mine').length;
+          if (revealedCells >= safeCells) {
+            gameOver = true;
+            minefield.classList.add('is-clear');
+          }
+        }
+
+        function revealMineCell(row, col) {
+          if (gameOver) return;
+          const value = mineGrid[row][col];
+          const idx = row * mineGrid[0].length + col;
+          const cell = minefield.children[idx];
+          if (!cell || cell.classList.contains('is-revealed')) return;
+
+          if (value === 'mine') {
+            cell.classList.add('is-revealed', 'is-mine');
+            cell.textContent = '💣';
+            gameOver = true;
+            revealAllMines();
+            return;
+          }
+
+          floodReveal(row, col);
+        }
+
+        function buildMinesweeper() {
+          const rect = container.getBoundingClientRect();
+          const cols = Math.max(8, Math.floor(rect.width / 36));
+          const rows = Math.max(6, Math.floor(rect.height / 36));
+          const mineCount = Math.max(10, Math.floor(rows * cols * 0.14));
+
+          minefield.innerHTML = '';
+          minefield.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+          minefield.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+          minefield.classList.remove('is-clear');
+          mineGrid = Array.from({ length: rows }, () => Array(cols).fill(0));
+          revealedCells = 0;
+          gameOver = false;
+
+          const mines = new Set();
+          while (mines.size < mineCount) {
+            const r = Math.floor(Math.random() * rows);
+            const c = Math.floor(Math.random() * cols);
+            mines.add(`${r}-${c}`);
+          }
+
+          mines.forEach((pos) => {
+            const [r, c] = pos.split('-').map(Number);
+            mineGrid[r][c] = 'mine';
+          });
+
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (mineGrid[r][c] === 'mine') continue;
+              mineGrid[r][c] = countAdjacentMines(r, c, rows, cols);
+            }
+          }
+
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const cell = document.createElement('button');
+              cell.type = 'button';
+              cell.className = 'mine-cell';
+              cell.addEventListener('click', () => revealMineCell(r, c));
+              minefield.appendChild(cell);
+            }
+          }
+        }
 
         function spawnMany() {
           // For each type, spawn 1..3
@@ -123,9 +252,17 @@
         }
 
         // initial spawn after small delay to allow layout
-        window.addEventListener('load', () => { setTimeout(spawnMany, 200); });
+        window.addEventListener('load', () => {
+          setTimeout(() => {
+            buildMinesweeper();
+            spawnMany();
+          }, 200);
+        });
         // respawn on resize if none remain
-        window.addEventListener('resize', () => { if (container.querySelectorAll('.siba-head').length===0) spawnMany(); });
+        window.addEventListener('resize', () => {
+          buildMinesweeper();
+          if (container.querySelectorAll('.siba-head').length === 0) spawnMany();
+        });
       })();
     </script>
   </body>
